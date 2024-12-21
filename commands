@@ -1,0 +1,4 @@
+1.how to change existing pod namespace in kubernetes:
+kubectl config set-context --current --namespace=dev
+2.To know more details of pod : 
+kubectl describe pods
