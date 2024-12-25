@@ -2,3 +2,22 @@
 kubectl config set-context --current --namespace=dev
 2.To know more details of pod : 
 kubectl describe pods
+Rollback the Deployment to the Previous Revision:
+
+3.Use the following command to initiate the rollback of the deployment to its previous revision:
+
+  $kubectl rollout undo deployment/nginx-deployment
+This command will roll back the deployment to the previous revision automatically.
+
+Verify the Rollback:
+
+  After performing the rollback, you can check the status of the deployment to ensure it has been rolled back successfully:
+    $kubectl get deployment nginx-deployment
+  You can also check the status of the pods to ensure that the previous revision is running:
+    $kubectl get pods -l app=nginx-deployment
+  If you want to see the list of previous revisions and their status, you can check the rollout history of the deployment using:
+    $kubectl rollout history deployment/nginx-deployment
+  This will show you the revisions and details about each deployment, such as which changes were made.
+  If you want to roll back to a specific revision (not just the previous one), you can specify the revision number like this:
+    $kubectl rollout undo deployment/nginx-deployment --to-revision=<revision_number>
+      Replace <revision_number> with the desired revision number.
