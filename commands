@@ -21,3 +21,6 @@ Verify the Rollback:
   If you want to roll back to a specific revision (not just the previous one), you can specify the revision number like this:
     $kubectl rollout undo deployment/nginx-deployment --to-revision=<revision_number>
       Replace <revision_number> with the desired revision number.
+4. using kubectl command create simple name space and pods
+    $kubectl run my-pod --image=my-image --namespace=my-namespace.
+    $kubectl create namespace
