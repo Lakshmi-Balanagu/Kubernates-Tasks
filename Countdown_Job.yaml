@@ -1,14 +1,16 @@
-apiVersion: batch/v1
-kind: Job
+---
+apiVersion: v1
+kind: Pod
 metadata:
-  name: countdown-xfusion
+  name: httpd-pod
 spec:
-  template:
-    metadata:
-      name: countdown-xfusion  # optional, helps with pod metadata
-    spec:
-      containers:
-      - name: container-countdown-xfusion
-        image: fedora:latest
-        command: ["sleep", "5"]
-      restartPolicy: Never
+  containers:
+  - name: httpd-container
+    image: httpd:latest
+    resources:
+      requests:
+        memory: "15Mi"
+        cpu: "100m"
+      limits:
+        memory: "20Mi"
+        cpu: "100m"
