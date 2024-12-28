@@ -1,0 +1,14 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: countdown-xfusion
+spec:
+  template:
+    metadata:
+      name: countdown-xfusion  # optional, helps with pod metadata
+    spec:
+      containers:
+      - name: container-countdown-xfusion
+        image: fedora:latest
+        command: ["sleep", "5"]
+      restartPolicy: Never
