@@ -38,6 +38,9 @@
    ```sh
    kubectl rollout undo deployment/httpd-deploy -n nautilus
    ```
+   
+---
+   
 # situation
    
    when you’re tasked with deploying a new version of a web application or service in a production environment while minimizing downtime and ensuring smooth traffic routing during updates. 
