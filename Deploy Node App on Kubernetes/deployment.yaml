@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: centos-ssh-node-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: centos-ssh-node
+  template:
+    metadata:
+      labels:
+        app: centos-ssh-node
+    spec:
+      containers:
+      - name: centos-ssh-node
+        image: gcr.io/kodekloud/centos-ssh-enabled:node
+        ports:
+        - containerPort: 8080
