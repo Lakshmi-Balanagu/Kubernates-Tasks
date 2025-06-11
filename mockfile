@@ -1,0 +1,68 @@
+ Kubernetes Troubleshooting — Mock Questions
+🔹 Q1. A pod is stuck in CrashLoopBackOff. What are the first two commands you should run to investigate?
+Answer:
+
+bash
+Copy
+Edit
+kubectl logs <pod-name> -n <namespace>
+kubectl describe pod <pod-name> -n <namespace>
+🔹 Q2. You deployed a pod with a private Docker image, and it's failing with ImagePullBackOff. What should you check or add?
+Answer:
+
+Check image name and tag are correct
+
+Add imagePullSecrets in deployment YAML:
+
+yaml
+Copy
+Edit
+imagePullSecrets:
+  - name: my-dockerhub-secret
+🔹 Q3. How do you debug internal service networking within the cluster?
+Answer:
+
+bash
+Copy
+Edit
+kubectl run -it busybox --image=busybox --restart=Never -- sh
+wget <service-name>:<port>
+🔹 Q4. What command shows resource usage (CPU/memory) of a pod?
+Answer:
+
+bash
+Copy
+Edit
+kubectl top pod -n <namespace>
+🔹 Q5. Which section in kubectl describe pod helps diagnose readiness or probe issues?
+Answer:
+The Events section.
+
+🔹 Q6. You're seeing HTTP 500s from a service. Where should you check if your app has a readinessProbe?
+Answer:
+In the pod spec YAML. For example:
+
+yaml
+Copy
+Edit
+readinessProbe:
+  httpGet:
+    path: /ready
+    port: 8080
+🔹 Q7. You want to run a health check every 30 minutes in GitHub Actions. What's a minimal setup?
+Answer:
+
+yaml
+Copy
+Edit
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+🔹 Q8. What's a common Prometheus alert to detect a failing pod?
+Answer:
+
+yaml
+Copy
+Edit
+- alert: PodCrashLooping
+  expr: kube_pod_container_status_restarts_total > 5
