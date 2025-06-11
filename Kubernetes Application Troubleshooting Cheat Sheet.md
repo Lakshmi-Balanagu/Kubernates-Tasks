@@ -72,8 +72,78 @@ livenessProbe:
 kubectl top pod -n <namespace>
 ```
 (Ensure Metrics Server is installed)
-
 - Use Prometheus, Grafana, or K9s for deeper insight
+
+---
+
+### 🧪 Common Real-Time Issues + Fixes
+
+#### ❌ ImagePullBackOff
+**Cause:** Wrong image name or unauthenticated private registry
+```bash
+kubectl describe pod <pod>  # Look at Events
+```
+✅ **Fix:** Update Deployment YAML with correct image or secret
+```yaml
+image: nginx:latest
+imagePullSecrets:
+  - name: my-dockerhub-secret
+```
+
+#### ❌ CrashLoopBackOff
+**Cause:** App crashes due to config/env/port mismatch
+```bash
+kubectl logs <pod>
+```
+✅ **Fix:** Check env vars, ConfigMaps, secret references
+
+#### ❌ Liveness/Readiness Failures
+**Cause:** Probe paths incorrect or service delay
+✅ **Fix:** Update probe to match actual app health endpoint
+```yaml
+readinessProbe:
+  httpGet:
+    path: /ready
+    port: 8080
+  initialDelaySeconds: 10
+  periodSeconds: 5
+```
+
+---
+
+### 🤖 Add GitHub Actions for Health Check
+```yaml
+# .github/workflows/k8s-healthcheck.yml
+name: K8s Health Check
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Curl endpoint
+      run: |
+        curl --fail http://my-app.example.com/healthz || exit 1
+```
+
+---
+
+### 🔔 Alerting with Prometheus
+**Steps:**
+1. Install Prometheus + Alertmanager in cluster
+2. Configure alert rules:
+```yaml
+- alert: PodCrashLooping
+  expr: kube_pod_container_status_restarts_total > 5
+  for: 2m
+  labels:
+    severity: critical
+  annotations:
+    summary: "Pod is crash looping"
+```
+3. Integrate with Slack, Email, OpsGenie
 
 # -----------------------------
 # End of Kubernetes Troubleshooting Cheat Sheet
