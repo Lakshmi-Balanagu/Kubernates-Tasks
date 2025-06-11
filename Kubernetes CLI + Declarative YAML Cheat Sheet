@@ -1,0 +1,126 @@
+# -----------------------------
+# Kubernetes CLI + Declarative YAML Cheat Sheet
+# -----------------------------
+
+# ✅ 1. Deployments (Declarative)
+# deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: app
+        image: my-image:latest
+        ports:
+        - containerPort: 8080
+
+kubectl apply -f deployment.yaml
+
+# ✅ 2. Services (ClusterIP, NodePort, LoadBalancer)
+# service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec:
+  selector:
+    app: my-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer
+
+kubectl apply -f service.yaml
+
+# ✅ 3. Rolling Update (default)
+kubectl set image deployment/my-app app=my-image:v2
+kubectl rollout status deployment/my-app
+
+# ✅ 4. Canary Deployment (manual split)
+# Create another deployment with fewer replicas and different version
+
+# ✅ 5. Blue/Green Deployment
+# Use separate deployments and switch Service selector
+
+# ✅ 6. PersistentVolume & PersistentVolumeClaim
+# pv.yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: my-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+
+# pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+kubectl apply -f pv.yaml
+kubectl apply -f pvc.yaml
+
+# ✅ 7. Mount PVC in Pod
+# pod-with-pvc.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pvc-pod
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command: ["sleep", "3600"]
+    volumeMounts:
+    - mountPath: "/data"
+      name: my-volume
+  volumes:
+  - name: my-volume
+    persistentVolumeClaim:
+      claimName: my-pvc
+
+# ✅ 8. ConfigMap
+kubectl create configmap app-config --from-literal=APP_MODE=prod
+kubectl get configmap app-config -o yaml
+
+# ✅ 9. Secrets
+kubectl create secret generic db-secret --from-literal=DB_PASS=pass123
+kubectl get secret db-secret -o yaml
+
+# ✅ 10. Logging
+kubectl logs <pod-name>  [-c container-name]
+kubectl logs -f <pod>
+
+# ✅ 11. Monitoring (Prometheus/Grafana)
+# Usually deployed via Helm charts
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm install prometheus prometheus-community/kube-prometheus-stack
+
+# ✅ 12. Useful Commands
+kubectl get all
+kubectl describe pod <name>
+kubectl exec -it <pod> -- sh
+kubectl get pvc,pv
+kubectl get svc
